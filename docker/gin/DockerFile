@@ -1,0 +1,14 @@
+FROM golang:1.13.3-alpine
+
+# Gopkg.toml 等を事前にコピーして dep ensure が実行できるようにする
+COPY ./go/src/app /go/src/app/
+
+WORKDIR /go/src/app/
+
+# 必要なパッケージをイメージにインストールする
+RUN apk update \
+  && apk add --no-cache git gcc g++\
+  && go get github.com/codegangsta/gin \
+  && go get github.com/derekparker/delve/cmd/dlv
+
+CMD gin -i run

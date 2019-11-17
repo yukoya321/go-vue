@@ -1,0 +1,34 @@
+version: '3'
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./docker/go/DockerFile
+    volumes:
+      - ./go/src/app:/go/src/app
+    ports:
+      - 3001:3001
+      - 8080:8080
+      # - 40000:40000
+    stdin_open: true
+    tty: true
+  front:
+    build:
+      context: .
+      dockerfile: ./docker/vue/DockerFile
+    ports:
+      - 80:9527
+    volumes:
+      - ./front:/app
+  db:
+    image: postgres:10.7-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

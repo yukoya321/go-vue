@@ -1,0 +1,23 @@
+FROM node:12.12.0-alpine
+
+WORKDIR /app
+COPY /front .
+
+RUN apk update \
+  && apk add --no-cache git python make g++
+
+ENV ENTRYKIT_VERSION 0.4.0
+
+RUN wget https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+  && tar -xvzf entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+  && rm entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
+  && mv entrykit /bin/entrykit \
+  && chmod +x /bin/entrykit \
+  && entrykit --symlink
+
+ENTRYPOINT [ \
+  "prehook", "yarn install", "--" \
+]
+
+EXPOSE 8080
+CMD ["yarn", "run", "serve"]
